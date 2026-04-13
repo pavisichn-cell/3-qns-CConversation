@@ -1,0 +1,820 @@
+
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leadership Scenarios | Interactive</title>
+  <style>
+    :root {
+      --brand-primary: #0A0C4F;
+      --brand-secondary: #08093E;
+      --brand-heading: #12195B;
+      --brand-text: #161617;
+      --brand-soft: #EEF2FF;
+      --brand-soft-2: #F8F9FF;
+      --brand-border: #D8DDF9;
+      --brand-highlight: #E8ECFF;
+      --success: #0F8A5F;
+      --shadow-lg: 0 24px 52px rgba(10, 12, 79, 0.14);
+      --shadow-md: 0 12px 28px rgba(10, 12, 79, 0.08);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      color: var(--brand-text);
+      background:
+        radial-gradient(circle at top left, rgba(232, 236, 255, 0.95), transparent 25%),
+        linear-gradient(140deg, #F6F8FF 0%, #EEF2FF 48%, #F9FAFF 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 20px 20px 12px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: #fff;
+      border-radius: var(--radius-xl);
+      padding: 34px 34px 32px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -50px;
+      bottom: -50px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 2.5vw, 3.1rem);
+      line-height: 1.12;
+    }
+
+    .hero p {
+      margin: 0;
+      line-height: 1.7;
+      font-size: 1.02rem;
+      color: rgba(255,255,255,0.94);
+    }
+
+    .workspace {
+      margin-top: 22px;
+      background: #fff;
+      border: 1px solid var(--brand-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .tabs-wrap {
+      background: #FBFCFF;
+      border-bottom: 1px solid var(--brand-border);
+      padding: 18px 18px 14px;
+    }
+
+    .tabs-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .tabs-head h2 {
+      margin: 0 0 4px;
+      color: var(--brand-heading);
+      font-size: 1.18rem;
+    }
+
+    .helper {
+      margin: 0;
+      color: #4C526B;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: 1px solid var(--brand-border);
+      background: #fff;
+      color: var(--brand-heading);
+      border-radius: 18px;
+      padding: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(10, 12, 79, 0.08);
+      background: #FAFBFF;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 14px 24px rgba(10, 12, 79, 0.20);
+    }
+
+    .tab-kicker {
+      display: inline-block;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .tab-title {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .tab-desc {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .content-panel { padding: 28px; }
+    .scenario-card { display: none; }
+    .scenario-card.active { display: block; }
+
+    .top-row {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .scenario-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--brand-soft);
+      border: 1px solid var(--brand-border);
+      border-radius: 999px;
+      color: var(--brand-heading);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .content-title {
+      margin: 14px 0 0;
+      color: var(--brand-heading);
+      font-size: 1.5rem;
+    }
+
+    .scenario-box {
+      background: #fff;
+      border: 1px solid var(--brand-border);
+      border-left: 6px solid var(--brand-primary);
+      border-radius: var(--radius-lg);
+      padding: 22px 22px 22px 18px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .scenario-box p {
+      margin: 0;
+      line-height: 1.8;
+      color: #3F445A;
+      font-size: 1rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .mini-card {
+      background: var(--brand-soft-2);
+      border: 1px solid var(--brand-border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+    }
+
+    .mini-card h3 {
+      margin: 0 0 10px;
+      color: var(--brand-heading);
+      font-size: 1.04rem;
+    }
+
+    .mini-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #42475D;
+      line-height: 1.68;
+    }
+
+    .action-panel {
+      margin-top: 22px;
+      background: linear-gradient(135deg, rgba(238,242,255,0.9), rgba(248,249,255,0.98));
+      border: 1px solid var(--brand-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .action-copy { flex: 1 1 420px; }
+    .action-copy h3 {
+      margin: 0 0 6px;
+      color: var(--brand-heading);
+      font-size: 1.05rem;
+    }
+
+    .action-copy p {
+      margin: 0;
+      color: #4C526B;
+      line-height: 1.65;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn:focus-visible, .tab-btn:focus-visible {
+      outline: 3px solid rgba(18, 25, 91, 0.22);
+      outline-offset: 3px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(10, 12, 79, 0.18);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--brand-heading);
+      border: 1px solid var(--brand-border);
+    }
+
+    .nav-controls {
+      display: none;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .nav-controls .btn { flex: 1; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(8, 9, 62, 0.72);
+      z-index: 1000;
+    }
+
+    .modal-backdrop.show { display: flex; }
+
+    .modal {
+      width: min(980px, 100%);
+      max-height: 90vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 28px;
+      border: 1px solid rgba(216, 221, 249, 0.7);
+      box-shadow: 0 36px 64px rgba(0,0,0,0.24);
+    }
+
+    .modal-head {
+      padding: 22px 24px 16px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: #fff;
+      border-radius: 28px 28px 0 0;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 1.45rem;
+      line-height: 1.25;
+    }
+
+    .modal-body { padding: 22px 24px 16px; }
+    .modal-lead {
+      margin: 0 0 18px;
+      color: #41465C;
+      line-height: 1.7;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .option-card {
+      background: #fff;
+      border: 1px solid var(--brand-border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: 0 8px 18px rgba(10, 12, 79, 0.05);
+      position: relative;
+    }
+
+    .option-card.recommended {
+      border: 2px solid var(--success);
+      background: linear-gradient(180deg, #F5FFF9 0%, #FFFFFF 100%);
+      box-shadow: 0 10px 22px rgba(15, 138, 95, 0.10);
+    }
+
+    .option-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--brand-highlight);
+      color: var(--brand-heading);
+      font-size: 0.92rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .recommended .option-tag {
+      background: rgba(15, 138, 95, 0.12);
+      color: var(--success);
+    }
+
+    .recommended-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 138, 95, 0.12);
+      color: var(--success);
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .option-card h4 {
+      margin: 0 0 8px;
+      color: var(--brand-heading);
+      font-size: 1rem;
+    }
+
+    .option-card p {
+      margin: 0;
+      color: #4C526B;
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .callout {
+      background: var(--brand-soft);
+      border: 1px solid var(--brand-border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .callout h4 {
+      margin: 0 0 10px;
+      color: var(--brand-heading);
+      font-size: 1rem;
+    }
+
+    .callout ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #42475D;
+      line-height: 1.7;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 24px 24px;
+    }
+
+    .site-footer {
+      margin-top: 18px;
+      padding: 18px 10px 12px;
+      text-align: center;
+      color: #4C526B;
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1024px) {
+      .tabs {
+        grid-template-columns: repeat(3, minmax(250px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+      .options-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .shell { padding: 14px 14px 10px; }
+      .hero, .workspace, .modal { border-radius: 22px; }
+      .hero { padding: 28px 22px; }
+      .content-panel { padding: 20px; }
+      .tabs-head, .top-row, .action-row { flex-direction: column; align-items: flex-start; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .tabs {
+        grid-auto-flow: column;
+        grid-auto-columns: 86%;
+        grid-template-columns: none;
+      }
+      .nav-controls { display: flex; }
+      .modal-head { border-radius: 22px 22px 0 0; }
+      .modal-head, .modal-body, .modal-actions { padding-left: 18px; padding-right: 18px; }
+      .btn-group { width: 100%; }
+      .btn-group .btn { flex: 1 1 100%; }
+      .site-footer { padding-left: 12px; padding-right: 12px; }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.9rem; }
+      .hero p, .helper, .scenario-box p, .action-copy p { font-size: 0.95rem; }
+      .tabs { grid-auto-columns: 92%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero" aria-labelledby="pageTitle">
+      <h1 id="pageTitle">Leadership Scenarios with hidden responses</h1>
+      <p>
+        Each scenario is shown on its own tab. The responses stay hidden until the user clicks the reveal button. When selected, the responses open in a pop-out panel and clearly show the recommended option.
+      </p>
+    </section>
+
+    <section class="workspace">
+      <div class="tabs-wrap">
+        <div class="tabs-head">
+          <div>
+            <h2>Choose a scenario</h2>
+            <p class="helper">Read the scenario, discuss it, then click <strong>Reveal responses</strong> when you are ready.</p>
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Leadership scenarios">
+          <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="scenario-1" id="tab-1" data-index="0">
+            <span class="tab-kicker">Scenario 1</span>
+            <span class="tab-title">A strong performer is slipping</span>
+            <span class="tab-desc">Balancing care, accountability and deadlines.</span>
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="scenario-2" id="tab-2" data-index="1">
+            <span class="tab-kicker">Scenario 2</span>
+            <span class="tab-title">A conflict is affecting team morale</span>
+            <span class="tab-desc">Responding to tension between two respected staff members.</span>
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="scenario-3" id="tab-3" data-index="2">
+            <span class="tab-kicker">Scenario 3</span>
+            <span class="tab-title">A decision must be made quickly</span>
+            <span class="tab-desc">Choosing action under pressure without losing trust.</span>
+          </button>
+        </div>
+
+        <div class="nav-controls" aria-label="Scenario navigation on smaller screens">
+          <button class="btn btn-secondary" type="button" id="prevScenario">Previous scenario</button>
+          <button class="btn btn-secondary" type="button" id="nextScenario">Next scenario</button>
+        </div>
+      </div>
+
+      <div class="content-panel">
+        <article class="scenario-card active" id="scenario-1" role="tabpanel" aria-labelledby="tab-1">
+          <div class="top-row">
+            <div>
+              <div class="scenario-badge">Scenario 1 • Performance and wellbeing</div>
+              <h2 class="content-title">A strong performer is slipping</h2>
+            </div>
+          </div>
+          <div class="scenario-box">
+            <p>You are leading a high-performing team in a busy organisation. Recently, one of your most capable team members has become noticeably withdrawn and has missed two key deadlines. When asked, they say they are “fine”, but they appear defensive and disengaged. At the same time, senior leadership is pushing hard for results and has asked you to lift performance across the board with no extra resources.</p>
+          </div>
+          <div class="grid-2">
+            <div class="mini-card">
+              <h3>Discussion questions</h3>
+              <ul>
+                <li>What pressure points are shaping this situation?</li>
+                <li>What are the risks of responding too quickly?</li>
+                <li>How do you balance support, fairness and performance?</li>
+              </ul>
+            </div>
+            <div class="mini-card">
+              <h3>Workplace application</h3>
+              <ul>
+                <li>How would you apply this approach in your own workplace if a strong team member suddenly became disengaged?</li>
+              </ul>
+            </div>
+          </div>
+          <div class="action-panel">
+            <div class="action-row">
+              <div class="action-copy">
+                <h3>Ready to compare the responses?</h3>
+                <p>The response options are hidden until this button is clicked.</p>
+              </div>
+              <div class="btn-group"><button class="btn btn-primary reveal-btn" type="button" data-scenario="0">Reveal responses</button></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario-card" id="scenario-2" role="tabpanel" aria-labelledby="tab-2">
+          <div class="top-row">
+            <div>
+              <div class="scenario-badge">Scenario 2 • Conflict and team culture</div>
+              <h2 class="content-title">A conflict is affecting team morale</h2>
+            </div>
+          </div>
+          <div class="scenario-box">
+            <p>Two respected team members have become increasingly tense with each other during meetings. Their disagreement began over a project decision, but it now shows up in emails, handovers and side conversations. The rest of the team is noticing and some people are starting to avoid speaking up. You need the project to stay on track, but morale is slipping.</p>
+          </div>
+          <div class="grid-2">
+            <div class="mini-card">
+              <h3>Discussion questions</h3>
+              <ul>
+                <li>What is the impact of leaving this unresolved?</li>
+                <li>How should the leader respond without taking sides too quickly?</li>
+                <li>What does fairness look like in this situation?</li>
+              </ul>
+            </div>
+            <div class="mini-card">
+              <h3>Workplace application</h3>
+              <ul>
+                <li>How would you handle rising tension between two respected colleagues in your own team while keeping trust intact?</li>
+              </ul>
+            </div>
+          </div>
+          <div class="action-panel">
+            <div class="action-row">
+              <div class="action-copy">
+                <h3>Ready to compare the responses?</h3>
+                <p>The response options are hidden until this button is clicked.</p>
+              </div>
+              <div class="btn-group"><button class="btn btn-primary reveal-btn" type="button" data-scenario="1">Reveal responses</button></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="scenario-card" id="scenario-3" role="tabpanel" aria-labelledby="tab-3">
+          <div class="top-row">
+            <div>
+              <div class="scenario-badge">Scenario 3 • Pressure and decision-making</div>
+              <h2 class="content-title">A decision must be made quickly</h2>
+            </div>
+          </div>
+          <div class="scenario-box">
+            <p>A major client has requested a last-minute change that would put pressure on your team and may affect quality. Senior leadership wants you to agree quickly to protect the relationship. Several team members are already stretched and one has quietly raised concerns that the timeline is unrealistic. You need to respond today.</p>
+          </div>
+          <div class="grid-2">
+            <div class="mini-card">
+              <h3>Discussion questions</h3>
+              <ul>
+                <li>What are the short-term and long-term risks of saying yes too quickly?</li>
+                <li>How should the leader weigh client needs against team capacity?</li>
+                <li>What information is needed before making the call?</li>
+              </ul>
+            </div>
+            <div class="mini-card">
+              <h3>Workplace application</h3>
+              <ul>
+                <li>What steps would you take in your own workplace to make a fast decision without over-promising or damaging trust?</li>
+              </ul>
+            </div>
+          </div>
+          <div class="action-panel">
+            <div class="action-row">
+              <div class="action-copy">
+                <h3>Ready to compare the responses?</h3>
+                <p>The response options are hidden until this button is clicked.</p>
+              </div>
+              <div class="btn-group"><button class="btn btn-primary reveal-btn" type="button" data-scenario="2">Reveal responses</button></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Copyright © 2026 Reframe WA Consulting</p>
+  </footer>
+
+  <div class="modal-backdrop" id="answerModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalLead">
+      <div class="modal-head"><h3 id="modalTitle">Scenario responses</h3></div>
+      <div class="modal-body">
+        <p class="modal-lead" id="modalLead"></p>
+        <div class="options-grid" id="modalOptions"></div>
+        <div class="callout">
+          <h4>Why the recommended response is strongest</h4>
+          <ul id="modalWhy"></ul>
+        </div>
+        <div class="callout">
+          <h4>Workplace application</h4>
+          <ul id="modalQuestion"></ul>
+        </div>
+      </div>
+      <div class="modal-actions"><button class="btn btn-primary" type="button" id="closeModal">Close</button></div>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        title: 'Scenario 1: A strong performer is slipping',
+        lead: 'Below are the three possible responses. Option 3 is the recommended response because it balances accountability and empathy.',
+        options: [
+          { title: 'Option 1: Focus on performance first', text: 'Hold a formal performance conversation, restate deadlines and reinforce accountability immediately.', recommended: false },
+          { title: 'Option 2: Prioritise care and support', text: 'Pause the pressure, check in privately and adjust workload before addressing expectations in detail.', recommended: false },
+          { title: 'Option 3: Balance accountability and empathy', text: 'Acknowledge the missed deadlines, explore what is happening, and agree on support plus clear next steps.', recommended: true }
+        ],
+        why: [
+          'It keeps expectations clear while showing care and good judgement.',
+          'It addresses the impact on the team without ignoring possible wellbeing concerns.',
+          'It is more likely to support sustainable improvement than a one-sided response.'
+        ],
+        workplace: 'How could you use this balanced approach in your own team when someone’s performance changes suddenly?'
+      },
+      {
+        title: 'Scenario 2: A conflict is affecting team morale',
+        lead: 'Below are the three possible responses. Option 3 is the recommended response because it addresses the conflict early and fairly.',
+        options: [
+          { title: 'Option 1: Step back and hope it settles', text: 'Avoid direct action for now and let the team sort it out informally while you focus on delivery.', recommended: false },
+          { title: 'Option 2: Call out the behaviour publicly', text: 'Address both team members in a group setting to show that disrespect will not be tolerated.', recommended: false },
+          { title: 'Option 3: Address it early and privately', text: 'Meet with each person, then bring them together for a respectful, structured conversation about expectations.', recommended: true }
+        ],
+        why: [
+          'It deals with the issue before it harms culture further.',
+          'It protects dignity and reduces the chance of defensiveness escalating.',
+          'It gives both people a fair chance to be heard while reinforcing standards.'
+        ],
+        workplace: 'What would this approach look like in your own workplace if conflict started affecting team morale?'
+      },
+      {
+        title: 'Scenario 3: A decision must be made quickly',
+        lead: 'Below are the three possible responses. Option 3 is the recommended response because it shows sound judgement under pressure.',
+        options: [
+          { title: 'Option 1: Say yes immediately', text: 'Agree on the spot to protect the client relationship, then ask the team to find a way to deliver.', recommended: false },
+          { title: 'Option 2: Refuse the request straight away', text: 'Decline immediately to protect the team from overload and avoid any risk to quality.', recommended: false },
+          { title: 'Option 3: Pause briefly and assess', text: 'Quickly gather the critical facts, test capacity and risks, then propose a realistic option or adjusted timeline.', recommended: true }
+        ],
+        why: [
+          'It avoids a rushed promise that could damage trust or quality later.',
+          'It balances commercial needs with team capacity and responsible leadership.',
+          'It helps the leader make a credible decision based on the most important facts.'
+        ],
+        workplace: 'How could you make a fast but credible decision in your own workplace without over-promising?'
+      }
+    ];
+
+    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+    const scenarioCards = Array.from(document.querySelectorAll('.scenario-card'));
+    const revealButtons = Array.from(document.querySelectorAll('.reveal-btn'));
+    const modal = document.getElementById('answerModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalLead = document.getElementById('modalLead');
+    const modalOptions = document.getElementById('modalOptions');
+    const modalWhy = document.getElementById('modalWhy');
+    const modalQuestion = document.getElementById('modalQuestion');
+    const closeModal = document.getElementById('closeModal');
+    const prevScenario = document.getElementById('prevScenario');
+    const nextScenario = document.getElementById('nextScenario');
+    let currentIndex = 0;
+    let lastTrigger = null;
+
+    function activateScenario(index) {
+      currentIndex = index;
+      tabButtons.forEach((btn, i) => {
+        const selected = i === index;
+        btn.classList.toggle('active', selected);
+        btn.setAttribute('aria-selected', selected ? 'true' : 'false');
+      });
+      scenarioCards.forEach((card, i) => card.classList.toggle('active', i === index));
+    }
+
+    tabButtons.forEach((btn, index) => {
+      btn.addEventListener('click', () => activateScenario(index));
+      btn.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          const next = (index + 1) % tabButtons.length;
+          activateScenario(next);
+          tabButtons[next].focus();
+        }
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          const prev = (index - 1 + tabButtons.length) % tabButtons.length;
+          activateScenario(prev);
+          tabButtons[prev].focus();
+        }
+      });
+    });
+
+    prevScenario.addEventListener('click', () => activateScenario((currentIndex - 1 + tabButtons.length) % tabButtons.length));
+    nextScenario.addEventListener('click', () => activateScenario((currentIndex + 1) % tabButtons.length));
+
+    function buildOptions(options) {
+      return options.map((option, index) => {
+        const recommendedClass = option.recommended ? 'option-card recommended' : 'option-card';
+        const badge = option.recommended ? '<div class="recommended-badge">Recommended response</div>' : '';
+        return `<div class="${recommendedClass}">${badge}<div class="option-tag">${index + 1}</div><h4>${option.title}</h4><p>${option.text}</p></div>`;
+      }).join('');
+    }
+
+    function openModal(index, trigger) {
+      const scenario = scenarios[index];
+      lastTrigger = trigger;
+      modalTitle.textContent = scenario.title;
+      modalLead.textContent = scenario.lead;
+      modalOptions.innerHTML = buildOptions(scenario.options);
+      modalWhy.innerHTML = scenario.why.map(point => `<li>${point}</li>`).join('');
+      modalQuestion.innerHTML = `<li>${scenario.workplace}</li>`;
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      closeModal.focus();
+    }
+
+    function closePopout() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastTrigger) lastTrigger.focus();
+    }
+
+    revealButtons.forEach((btn) => {
+      btn.addEventListener('click', () => openModal(Number(btn.dataset.scenario), btn));
+    });
+
+    closeModal.addEventListener('click', closePopout);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closePopout();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('show')) closePopout();
+    });
+
+    activateScenario(0);
+  </script>
+</body>
+</html>
